@@ -1,0 +1,79 @@
+<?php
+namespace Model\Services;
+
+use Exception;
+use PDO;
+use Model\Utilities\Log;
+
+class DataAccess
+{        
+    /**
+     * @param mixed $table
+     * @param mixed $column
+     * @param mixed $path
+     * 
+     * @return [type]
+     */
+    public static function GetColumn($table, $column, $path)
+    {                          
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {            
+            $statement = $pdo->prepare("SELECT $column FROM $table");
+            $statement->execute();            
+            return $statement->fetchAll();
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('error.txt', $e->getMessage());
+            die($e);
+        }
+    }
+
+    /**
+     * @param mixed $table
+     * @param mixed $column
+     * @param mixed $path
+     * @param mixed $whereColumn
+     * @param mixed $whereValue
+     * @param bool $isArray
+     * 
+     * @return [type]
+     */
+    public static function GetValues($table, $column, $path, $whereColumn, $whereValue)
+    {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {            
+            $statement = $pdo->prepare("SELECT $column FROM $table WHERE $whereColumn = :whereValue");
+            $statement->bindParam(':whereValue', $whereValue, PDO::PARAM_STR);
+            $statement->execute();            
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);            
+            return $result;
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('error.txt', $e->getMessage());
+            die($e);
+        }
+    }
+
+    public static function GetTable($table, $path)
+    {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {
+            $statement = $pdo->prepare("SELECT * FROM $table");
+            $statement->execute();
+            return $statement->fetchAll(PDO::FETCH_ASSOC);
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('error.txt', $e->getMessage());
+            die($e);
+        }
+    }
+}

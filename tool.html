@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="./tool.css">
+    <script src="./tool.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="character-inventory">
+            <div id="character">
+                <select id="select-characters" name="select-characters"></select>
+            </div>
+        </div>
+        <div id="items">
+
+        </div>
+    </div>
+    <div id="toolbox">
+        <div id="create">
+            <p>Create</p>
+            <span id="attributes">
+                ItemType:
+                <select id="select-itemType"></select>                
+            </span>            
+        </div>
+        <div id="delete">
+            <p>Delete</p>
+        </div>
+        <button id="test-button">Test</button>
+        <button id="clear-button">Clear Message</button>
+        Server: <p id="server-response"></p>
+    </div>
+</body>
+</html>

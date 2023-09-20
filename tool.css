@@ -1,0 +1,110 @@
+body
+{
+    background-color: rgb(1, 87, 1);
+    margin: 0px 10% 0px 10%;    
+    padding: 30px;
+}
+
+#container
+{
+    display: flex;
+    background-color: black;
+    height: 500px;
+    border: 1px rgb(180, 180, 180) solid;
+}
+
+#character-inventory
+{
+    width: 50%;
+    background-color: rgb(56, 56, 56);
+}
+
+#character
+{
+    background-color: rgb(10, 10, 10);
+}
+
+#select-characters
+{
+    width: 50%;
+}
+
+#items
+{
+    width: 50%;
+    background-color: rgb(24, 24, 24);
+}
+
+#toolbox
+{
+    background-color: rgb(57, 102, 57);
+    margin-top: 20px;
+    border: 3px rgb(67, 126, 101) solid;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;    
+}
+
+#create
+{
+    background-color: rgb(26, 95, 26);
+    border: 1px solid rgb(41, 7, 7);    
+    min-height: 30px;
+    padding-bottom: 30px;
+}
+
+#delete
+{
+    background-color: rgb(26, 95, 26);
+    border: 1px solid rgb(41, 7, 7);    
+    min-height: 30px;
+    padding-bottom: 30px;
+}
+
+#select-itemType
+{
+    width: 100px;
+}
+
+/* HERE STARTS THE DYNAMIC CONTENT'S CSS */
+#form
+{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#mainDiv
+{
+    display: flex;
+    flex-direction: row;
+}
+
+.inputBox
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    text-align: center;
+    align-items: center;
+    width: 220px;
+    height: 40px;
+    border-style: solid;
+    border-width: 1px;
+    overflow: hidden;
+}
+
+.inputField
+{
+    height: auto;
+    width: 100px;
+    resize: both;
+    overflow-y: hidden;
+}
