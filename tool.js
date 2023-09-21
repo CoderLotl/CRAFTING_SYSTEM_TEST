@@ -234,9 +234,7 @@ async function LoadCharItems()
   const charid = selectedOption.getAttribute('idchar');
 
   const params = { charId: charid};
-  const queryString = Object.keys(params)
-    .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(params[key]))
-    .join("&");
+  const queryString = ParametrizeArray(params);
 
   try
   {
@@ -258,12 +256,12 @@ async function LoadCharItems()
         let article = document.createElement('article');
         article.setAttribute('class', 'itemArticle');
 
-        let type = document.createElement('span');
+        let type = document.createElement('p');
+        type.style.height = '10px';
 
         let drop = document.createElement('button');
-        let dropImg = document.createElement('img');
-        dropImg.src = './inbox.png';
-        drop.appendChild(dropImg);        
+        drop.textContent = 'Drop';
+        drop.style.marginLeft = '5px';
         
         let textNode = document.createTextNode("Item: " + item.type);
         type.appendChild(textNode);        
@@ -307,4 +305,33 @@ function CatchError(error)
   par.appendChild(content);
   console.error('error:', error);
   return `EXCEPTION: ${error}`;
+}
+
+function ParametrizeArray(data)
+{
+  return Object.keys(data)
+  .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(params[key]))
+  .join("&");
+} // TENGO QUE CORREGIR SelectItemType !!!
+
+////////////////////////////////////////////////////////////////////
+
+async function DropItem(id)
+{
+  let item = {itemID: id};
+  let params = ParametrizeArray(item);
+  try
+  {
+    const response = await fetch('http://localhost' + '/getType?' + params,
+    {
+      method: "GET",
+      headers: {                
+      "Content-Type": "application/json",      
+      }
+    });
+  }
+  catch(error)
+  {
+    CatchError(error);
+  }  
 }

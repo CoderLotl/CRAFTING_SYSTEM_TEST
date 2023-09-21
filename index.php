@@ -66,6 +66,12 @@ $app->get('/getCharItems', function (Request $request, Response $response)
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/itemDrop', function (Request $request, Response $response) {
+    $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE']));
+    $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/getType', function (Request $request, Response $response) {
     $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE']));
     $response->getBody()->write($data);

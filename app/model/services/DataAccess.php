@@ -6,7 +6,13 @@ use PDO;
 use Model\Utilities\Log;
 
 class DataAccess
-{        
+{
+    private static function Catch($e)
+    {
+        Log::WriteLog('error.txt', $e->getMessage());
+    }
+    
+    #region [ GET ]        
     /**
      * @param mixed $table
      * @param mixed $column
@@ -26,8 +32,7 @@ class DataAccess
         }
         catch(Exception $e)
         {
-            Log::WriteLog('error.txt', $e->getMessage());
-            die($e);
+            self::Catch($e);
         }
     }
 
@@ -55,8 +60,7 @@ class DataAccess
         }
         catch(Exception $e)
         {
-            Log::WriteLog('error.txt', $e->getMessage());
-            die($e);
+            self::Catch($e);
         }
     }
 
@@ -90,7 +94,7 @@ class DataAccess
         }
         catch(Exception $e)
         {
-            Log::WriteLog('error.txt', $e->getMessage());            
+            self::Catch($e);           
         }
     }
 
@@ -106,8 +110,23 @@ class DataAccess
         }
         catch(Exception $e)
         {
-            Log::WriteLog('error.txt', $e->getMessage());
-            die($e);
+            self::Catch($e);
+        }
+    }
+    #endregion
+
+    #region [ UPDATE ]
+    public static function Update($table, $path)
+    {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {
+
+        }
+        catch(Exception $e)
+        {
+            self::Catch($e);
         }
     }
 }
