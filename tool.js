@@ -8,6 +8,10 @@ async function load()
     {
       SelectItemType();
     });
+    document.getElementById('select-characters').addEventListener('change', () =>
+    {
+      SelectCharacter();
+    });
     document.getElementById('test-button').addEventListener('click', () =>
     {
       TestServer();
@@ -33,7 +37,11 @@ async function PopulateItemType()
         const data = await response.json();
 
         const select = document.getElementById('select-itemType'); // Replace with the actual ID of your select element
-        data.forEach(item => {
+        const option = document.createElement('option');
+        option.textContent = '';
+        option.value = '';
+        select.appendChild(option);
+        data.forEach(item => {          
           const option = document.createElement('option');
           option.value = item.type;
           option.textContent = item.type;
@@ -61,11 +69,17 @@ async function PopulateCharacters()
     const data = await response.json();
 
     const select = document.getElementById('select-characters');
+    const option = document.createElement('option');
+    option.textContent = '';
+    option.value = '';    
+    select.appendChild(option);
     data.forEach(item =>
       {
+        //console.log(item);
         const option = document.createElement('option');
         option.value = item.name;
         option.textContent = item.name;
+        option.setAttribute('idChar', item.id);
         select.appendChild(option);
     });
     select.value = '';
@@ -116,24 +130,29 @@ function ClearMessage()
 
 async function SelectCharacter()
 {
-  const selectItemType = document.getElementById('select-characters').value;
-  if(selectItemType != null || selectItemType != '')
+  const charSelect = document.getElementById('select-characters').value;
+  if(charSelect != null && charSelect != '')
   {
     try
     {
-
+      LoadCharItems();
     }
     catch(error)
     {
       CatchError(error);
     }
   }
+  else
+  {
+    document.getElementById('charItems').innerHTML = '';
+  }
 }
 
 async function SelectItemType()
 {    
   const selectItemType = document.getElementById('select-itemType').value;
-  if(selectItemType != null || selectItemType != '')
+  let attElement = document.getElementById('attributes');
+  if(selectItemType != null && selectItemType != '')
   {
     try
     {
@@ -149,7 +168,6 @@ async function SelectItemType()
       let data = await response.json();      
       let attributes = JSON.parse(data[0].attributes);
 
-      let attElement = document.getElementById('attributes');
       let form = document.createElement('form');
       let mainDiv = document.createElement('div');
       form.setAttribute('id', 'form');
@@ -199,23 +217,68 @@ async function SelectItemType()
       CatchError(error);
     }
   }
+  else
+  {
+    let form = document.getElementById('form');
+    if(form != null)
+    {
+      form.remove();
+    }
+  }
 }
 
-async function LoadItems()
-{
-  const container = document.getElementById('container');
+async function LoadCharItems()
+{  
+  const select = document.getElementById('select-characters');
+  const selectedOption = select.options[select.selectedIndex];
+  const charid = selectedOption.getAttribute('idchar');
+
+  const params = { charId: charid};
+  const queryString = Object.keys(params)
+    .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(params[key]))
+    .join("&");
 
   try
   {
-    const response = await fetch('http://localhost' + '/test',
+    const response = await fetch('http://localhost' + '/getCharItems?' + queryString,
     {
         method: "GET",
         headers: {                
         "Content-Type": "text/plain",
-        }
+        }        
     });
     let data = await response.json();
-    console.log(data);
+    
+    if(data.length > 0)
+    {
+      
+      const itemArea = document.getElementById('charItems');
+      data.forEach(item =>
+      {
+        let article = document.createElement('article');
+        article.setAttribute('class', 'itemArticle');
+
+        let type = document.createElement('p');
+        
+        let details = document.createElement('details');
+        let components = document.createElement('p');
+        let attributes = document.createElement('p');
+        let state = document.createElement('p');
+
+        type.textContent = "Item: " + item.type;
+        components.textContent = "Components: " + item.components;
+        attributes.textContent = "Attributes: " + item.attributes;
+        state.textContent = "State: " + item.state;
+
+        article.appendChild(type);
+        details.appendChild(components);
+        details.appendChild(attributes);
+        details.appendChild(state);        
+        article.appendChild(details);
+
+        itemArea.appendChild(article);
+      });      
+    }
   }
   catch (error)
   {

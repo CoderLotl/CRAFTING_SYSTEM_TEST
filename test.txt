@@ -1,0 +1,4 @@
+[]
+[]
+[]
+[{"type":"knife","components":"","attributes":"","location":0,"state":0,"inventory":1}]

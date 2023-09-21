@@ -60,6 +60,40 @@ class DataAccess
         }
     }
 
+    public static function GetEntries($table, $path, array $columns, array $values)
+    {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {
+            if (!is_array($columns) || !is_array($values) || count($columns) !== count($values))
+            {
+                throw new Exception("Invalid input: Columns and values must be arrays, and be of the same length.");
+            }
+
+            $whereClauses = [];
+            foreach ($columns as $column)
+            {
+                $whereClauses[] = $column . ' = :' . $column;
+            }
+
+            $whereClause = implode(' AND ', $whereClauses);
+
+            $statement = $pdo->prepare("SELECT * FROM $table WHERE $whereClause");
+            $bindParams = array_combine($columns, $values);
+
+            $statement->execute($bindParams);
+
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC); 
+            
+            return $result;
+        }
+        catch(Exception $e)
+        {
+            Log::WriteLog('error.txt', $e->getMessage());            
+        }
+    }
+
     public static function GetTable($table, $path)
     {
         $pdo = new PDO('sqlite:' . $path);
