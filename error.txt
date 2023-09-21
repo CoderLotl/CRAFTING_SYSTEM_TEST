@@ -1,0 +1,5 @@
+SQLSTATE[HY000]: General error: 1 no such table: characters
+SQLSTATE[HY000]: General error: 1 no such table: characters
+SQLSTATE[HY000]: General error: 1 no such table: characters
+SQLSTATE[HY000]: General error: 1 no such table: characters
+SQLSTATE[HY000]: General error: 1 no such table: characters

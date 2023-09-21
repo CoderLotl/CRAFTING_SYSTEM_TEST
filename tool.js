@@ -258,14 +258,23 @@ async function LoadCharItems()
         let article = document.createElement('article');
         article.setAttribute('class', 'itemArticle');
 
-        let type = document.createElement('p');
+        let type = document.createElement('span');
+
+        let drop = document.createElement('button');
+        let dropImg = document.createElement('img');
+        dropImg.src = './inbox.png';
+        drop.appendChild(dropImg);        
+        
+        let textNode = document.createTextNode("Item: " + item.type);
+        type.appendChild(textNode);        
+        type.appendChild(drop);
+
         
         let details = document.createElement('details');
         let components = document.createElement('p');
         let attributes = document.createElement('p');
         let state = document.createElement('p');
 
-        type.textContent = "Item: " + item.type;
         components.textContent = "Components: " + item.components;
         attributes.textContent = "Attributes: " + item.attributes;
         state.textContent = "State: " + item.state;
