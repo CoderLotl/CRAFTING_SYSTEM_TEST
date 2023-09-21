@@ -11,7 +11,7 @@ class DataAccess
     {
         Log::WriteLog('error.txt', $e->getMessage());
     }
-    
+
     #region [ GET ]        
     /**
      * @param mixed $table
@@ -46,7 +46,7 @@ class DataAccess
      * 
      * @return [type]
      */
-    public static function GetValues($table, $column, $path, $whereColumn, $whereValue)
+    public static function GetValues($table, $column, $path, $whereColumn, $whereValue, $assocArray = false)
     {
         $pdo = new PDO('sqlite:' . $path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -54,8 +54,17 @@ class DataAccess
         {            
             $statement = $pdo->prepare("SELECT $column FROM $table WHERE $whereColumn = :whereValue");
             $statement->bindParam(':whereValue', $whereValue, PDO::PARAM_STR);
-            $statement->execute();            
-            $result = $statement->fetchAll(PDO::FETCH_ASSOC);            
+            $statement->execute();
+            $result = '';
+            if($assocArray == true)
+            {
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);  
+            }
+            else
+            {
+                $result = $statement->fetch();
+            }
+            //Log::WriteLog('testing.txt', json_encode($result));
             return $result;
         }
         catch(Exception $e)
@@ -116,17 +125,46 @@ class DataAccess
     #endregion
 
     #region [ UPDATE ]
-    public static function Update($table, $path)
+    public static function Update($table, $path, array $setColumn, array $setValue, $targetColumn, $targetValue)
     {
         $pdo = new PDO('sqlite:' . $path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try
         {
+            if (!is_array($setColumn) || !is_array($setValue) || count($setColumn) !== count($setValue))
+            {
+                throw new Exception("Invalid input: Columns and values must be arrays, and be of the same length.");
+            }
 
+            $updateValues = '';
+
+            for($i = 0; $i < count($setColumn); $i++)
+            {
+                $updateValues .= " {$setColumn[$i]} = {$setValue[$i]}";
+                if($i < count($setColumn) - 1)
+                {
+                    $updateValues .= ', ';
+                }
+            }
+
+            //Log::WriteLog('test.txt', "UPDATE $table SET $updateValues WHERE $targetColumn = $targetValue");
+            $statement = $pdo->prepare("UPDATE $table SET $updateValues WHERE $targetColumn = $targetValue");
+
+            $result = $statement->execute();
+
+            if($result)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         catch(Exception $e)
         {
             self::Catch($e);
+            return false;
         }
     }
 }

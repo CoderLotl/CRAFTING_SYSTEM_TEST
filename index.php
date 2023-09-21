@@ -67,13 +67,23 @@ $app->get('/getCharItems', function (Request $request, Response $response)
 });
 
 $app->get('/itemDrop', function (Request $request, Response $response) {
-    $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE']));
-    $response->getBody()->write($data);
-    return $response->withHeader('Content-Type', 'application/json');
+    $queryParams = $request->getQueryParams();
+    $charLocation = DataAccess::GetValues('characters', 'location', DB, 'id', $queryParams['charID']);
+    
+    $success = DataAccess::Update('items', DB, ['inventory', 'locationType'], [$charLocation[0], 0], 'id', $queryParams['itemID']);
+
+    if($success == true)
+    {
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+    else
+    {
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+    }
 });
 
 $app->get('/getType', function (Request $request, Response $response) {
-    $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE']));
+    $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE'], true));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
 });

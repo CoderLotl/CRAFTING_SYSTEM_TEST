@@ -75,8 +75,7 @@ async function PopulateCharacters()
     select.appendChild(option);
     data.forEach(item =>
       {
-        //console.log(item);
-        const option = document.createElement('option');
+        //console.log(item);        
         option.value = item.name;
         option.textContent = item.name;
         option.setAttribute('idChar', item.id);
@@ -247,10 +246,9 @@ async function LoadCharItems()
     });
     let data = await response.json();
     
+    const itemArea = document.getElementById('charItems');
     if(data.length > 0)
-    {
-      
-      const itemArea = document.getElementById('charItems');
+    {      
       data.forEach(item =>
       {
         let article = document.createElement('article');
@@ -261,30 +259,69 @@ async function LoadCharItems()
 
         let drop = document.createElement('button');
         drop.textContent = 'Drop';
-        drop.style.marginLeft = '5px';
+        drop.style.marginLeft = '5px';        
         
         let textNode = document.createTextNode("Item: " + item.type);
         type.appendChild(textNode);        
         type.appendChild(drop);
 
-        
         let details = document.createElement('details');
+        let id = document.createElement('p');
         let components = document.createElement('p');
         let attributes = document.createElement('p');
         let state = document.createElement('p');
 
+        article.setAttribute('itemID', item.id);
+        id.textContent = "ID: " + item.id;
         components.textContent = "Components: " + item.components;
         attributes.textContent = "Attributes: " + item.attributes;
         state.textContent = "State: " + item.state;
 
         article.appendChild(type);
+        details.appendChild(id);
         details.appendChild(components);
         details.appendChild(attributes);
         details.appendChild(state);        
         article.appendChild(details);
 
         itemArea.appendChild(article);
+
+        drop.addEventListener('click', async (event) =>
+        {
+          event.preventDefault();
+          const artID = item.id;
+          //console.log(artID);          
+
+          /*if(await DropItem(artID) == true)
+          {
+            let articles = itemArea.querySelectorAll('article');
+            articles.forEach(art =>
+            {
+                let thisArtID = art.getAttribute('itemID');
+                //console.log(thisArtID);
+                if(thisArtID == artID)
+                {
+                  itemArea.removeChild(art);                
+                }
+            });
+          }*/
+
+          let articles = itemArea.querySelectorAll('article');
+          articles.forEach(art =>
+          {
+              let thisArtID = art.getAttribute('itemID');
+              //console.log(thisArtID);
+              if(thisArtID == artID)
+              {
+                itemArea.removeChild(art);                
+              }
+          });
+        });
       });      
+    }
+    else
+    {
+      itemArea.innerHTML = '';
     }
   }
   catch (error)
@@ -304,13 +341,13 @@ function CatchError(error)
   const content = document.createTextNode(error);
   par.appendChild(content);
   console.error('error:', error);
-  return `EXCEPTION: ${error}`;
+  localStorage.setItem('lastError', error);
 }
 
 function ParametrizeArray(data)
 {
   return Object.keys(data)
-  .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(params[key]))
+  .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
   .join("&");
 } // TENGO QUE CORREGIR SelectItemType !!!
 
@@ -318,20 +355,33 @@ function ParametrizeArray(data)
 
 async function DropItem(id)
 {
-  let item = {itemID: id};
+  const select = document.getElementById('select-characters');
+  const selectedOption = select.options[select.selectedIndex];
+  const charid = selectedOption.getAttribute('idchar');
+  let item = {itemID: id, charID: charid};
   let params = ParametrizeArray(item);
   try
   {
-    const response = await fetch('http://localhost' + '/getType?' + params,
+    const response = await fetch('http://localhost' + '/itemDrop?' + params,
     {
       method: "GET",
       headers: {                
       "Content-Type": "application/json",      
       }
     });
+    if(response.ok)
+    {      
+      return true;
+    }
+    else
+    {
+      console.log('error');
+      return false;
+    }
   }
   catch(error)
   {
     CatchError(error);
+    return false;
   }  
 }
