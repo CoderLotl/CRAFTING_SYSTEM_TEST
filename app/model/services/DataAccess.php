@@ -46,7 +46,7 @@ class DataAccess
      * 
      * @return [type]
      */
-    public static function GetValues($table, $column, $path, $whereColumn, $whereValue, $assocArray = false)
+    public static function GetValue($table, $column, $path, $whereColumn, $whereValue, $assocArray = false)
     {
         $pdo = new PDO('sqlite:' . $path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -63,8 +63,7 @@ class DataAccess
             else
             {
                 $result = $statement->fetch();
-            }
-            //Log::WriteLog('testing.txt', json_encode($result));
+            }            
             return $result;
         }
         catch(Exception $e)
@@ -73,19 +72,19 @@ class DataAccess
         }
     }
 
-    public static function GetEntries($table, $path, array $columns, array $values)
+    public static function GetRow($table, $path, array $whereColumns, array $whereValues, $assocArray = false)
     {
         $pdo = new PDO('sqlite:' . $path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try
         {
-            if (!is_array($columns) || !is_array($values) || count($columns) !== count($values))
+            if (!is_array($whereColumns) || !is_array($whereValues) || count($whereColumns) !== count($whereValues))
             {
                 throw new Exception("Invalid input: Columns and values must be arrays, and be of the same length.");
             }
 
             $whereClauses = [];
-            foreach ($columns as $column)
+            foreach ($whereColumns as $column)
             {
                 $whereClauses[] = $column . ' = :' . $column;
             }
@@ -93,9 +92,18 @@ class DataAccess
             $whereClause = implode(' AND ', $whereClauses);
 
             $statement = $pdo->prepare("SELECT * FROM $table WHERE $whereClause");
-            $bindParams = array_combine($columns, $values);
+            $bindParams = array_combine($whereColumns, $whereValues);
 
             $statement->execute($bindParams);
+            if($assocArray == true)
+            {
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);  
+            }
+            else
+            {
+                $result = $statement->fetch();
+            }            
+            return $result;
 
             $result = $statement->fetchAll(PDO::FETCH_ASSOC); 
             

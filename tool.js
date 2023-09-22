@@ -4,22 +4,67 @@ async function load()
 {
     PopulateItemType();
     PopulateCharacters();
+
+    //SELECT ITEM TYPE
     document.getElementById('select-itemType').addEventListener('change', () =>
     {
       SelectItemType();
     });
-    document.getElementById('select-characters').addEventListener('change', () =>
+
+    //RELOAD CHAR ITEMS
+    document.getElementById('reloadItems').addEventListener('click', () =>
     {
+      document.getElementById('charItems').innerHTML = '';
       SelectCharacter();
     });
+
+    //CHAR SELECTOR
+    document.getElementById('select-characters').addEventListener('change', () =>
+    {
+      SelectCharacter();      
+    });
+
+    //TEST BUTTON
     document.getElementById('test-button').addEventListener('click', () =>
     {
       TestServer();
     });
+
+    //CLEAR SERVER MESSAGES
     document.getElementById('clear-button').addEventListener('click', () => 
     {
       ClearMessage();
     });
+}
+
+async function LoadLocation()
+{
+  const select = document.getElementById('select-characters');
+  const selectedOption = select.options[select.selectedIndex];
+  const charLocation = selectedOption.getAttribute('locationChar');
+  const params = {charLoc: charLocation};
+  const queryString = ParametrizeArray(params);
+
+  try
+  {
+    const response = await fetch('http://localhost' + '/getLocation?' + queryString,
+    {
+      method: "GET",
+      headers: {                
+        "Content-Type": "application/json",
+      }
+    });
+    const data = await response.json();    
+
+    document.getElementById('locId').textContent = '';
+    document.getElementById('locId').textContent = "Location ID: " + data.id;
+    document.getElementById('locDescription').textContent = '';
+    document.getElementById('locDescription').textContent = "Description: " + data.description;
+  }
+  catch(error)
+  {
+    CatchError(error);
+  }
 }
 
 async function PopulateItemType()
@@ -55,6 +100,12 @@ async function PopulateItemType()
     }
 }
 
+async function LoadCharacterLocation()
+{
+  const charDiv = document.getElementById('character');
+  
+}
+
 async function PopulateCharacters()
 {
   try
@@ -65,19 +116,20 @@ async function PopulateCharacters()
       headers: {                
         "Content-Type": "application/json",
       }
-    });
+    });    
     const data = await response.json();
 
     const select = document.getElementById('select-characters');
-    const option = document.createElement('option');
-    option.textContent = '';
-    option.value = '';    
-    select.appendChild(option);
+    const initialOption = document.createElement('option');
+    initialOption.textContent = '';
+    initialOption.value = '';
+    select.appendChild(initialOption);
     data.forEach(item =>
-      {
-        //console.log(item);        
+      {        
+        const option = document.createElement('option');
         option.value = item.name;
         option.textContent = item.name;
+        option.setAttribute('locationChar', item.location);
         option.setAttribute('idChar', item.id);
         select.appendChild(option);
     });
@@ -134,7 +186,8 @@ async function SelectCharacter()
   {
     try
     {
-      LoadCharItems();
+      await LoadCharItems()
+      await LoadLocation();
     }
     catch(error)
     {
@@ -144,6 +197,8 @@ async function SelectCharacter()
   else
   {
     document.getElementById('charItems').innerHTML = '';
+    document.getElementById('locId').textContent = '';    
+    document.getElementById('locDescription').textContent = '';
   }
 }
 
@@ -290,9 +345,9 @@ async function LoadCharItems()
         {
           event.preventDefault();
           const artID = item.id;
-          //console.log(artID);          
+          //console.log(artID);
 
-          /*if(await DropItem(artID) == true)
+          if(await DropItem(artID) == true)
           {
             let articles = itemArea.querySelectorAll('article');
             articles.forEach(art =>
@@ -304,29 +359,30 @@ async function LoadCharItems()
                   itemArea.removeChild(art);                
                 }
             });
-          }*/
-
-          let articles = itemArea.querySelectorAll('article');
-          articles.forEach(art =>
-          {
-              let thisArtID = art.getAttribute('itemID');
-              //console.log(thisArtID);
-              if(thisArtID == artID)
-              {
-                itemArea.removeChild(art);                
-              }
-          });
+          }
         });
       });      
     }
     else
     {
-      itemArea.innerHTML = '';
+      itemArea.innerHTML = '';      
     }
   }
   catch (error)
   {
-    CatchError(error);
+    CatchError(error);    
+  }
+}
+
+async function LoadLocationItems()
+{
+  try
+  {
+
+  }
+  catch(error)
+  {
+    CatchError();
   }
 }
 
@@ -358,6 +414,7 @@ async function DropItem(id)
   const select = document.getElementById('select-characters');
   const selectedOption = select.options[select.selectedIndex];
   const charid = selectedOption.getAttribute('idchar');
+    
   let item = {itemID: id, charID: charid};
   let params = ParametrizeArray(item);
   try

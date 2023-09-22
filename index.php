@@ -61,14 +61,22 @@ $app->get('/getCharacters', function (Request $request, Response $response) {
 $app->get('/getCharItems', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();    
-    $data = json_encode(DataAccess::GetEntries('items', DB, ['inventory'], [$queryParams['charId']]));
+    $data = json_encode(DataAccess::GetRow('items', DB, ['inventory'], [$queryParams['charId']]), true);
     $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/getLocation', function (Request $request, Response $response)
+{
+    $queryParams = $request->getQueryParams();
+    $data = json_encode(DataAccess::GetRow('locations', DB, ['id'], [$queryParams['charLoc']]));
+    $response->getBody()->write($data);    
     return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->get('/itemDrop', function (Request $request, Response $response) {
     $queryParams = $request->getQueryParams();
-    $charLocation = DataAccess::GetValues('characters', 'location', DB, 'id', $queryParams['charID']);
+    $charLocation = DataAccess::GetValue('characters', 'location', DB, 'id', $queryParams['charID']);
     
     $success = DataAccess::Update('items', DB, ['inventory', 'locationType'], [$charLocation[0], 0], 'id', $queryParams['itemID']);
 
@@ -83,7 +91,7 @@ $app->get('/itemDrop', function (Request $request, Response $response) {
 });
 
 $app->get('/getType', function (Request $request, Response $response) {
-    $data = json_encode(DataAccess::GetValues('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE'], true));
+    $data = json_encode(DataAccess::GetValue('item_types', 'attributes', DB, 'type', $_SERVER['HTTP_TYPE'], true));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
 });

@@ -24,6 +24,15 @@ body
     padding: 3px;
     color: rgb(204, 200, 195);
     background-color: rgb(10, 10, 10);
+    min-height: 50px;
+}
+
+#location
+{
+    padding: 3px;
+    color: rgb(204, 200, 195);
+    background-color: rgb(10, 10, 10);
+    min-height: 50px;
 }
 
 #select-characters
