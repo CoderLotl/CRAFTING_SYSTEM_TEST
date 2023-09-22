@@ -287,7 +287,7 @@ async function LoadCharItems()
   const selectedOption = select.options[select.selectedIndex];
   const charid = selectedOption.getAttribute('idchar');
 
-  const params = { charId: charid};
+  const params = { charId: charid};  
   const queryString = ParametrizeArray(params);
 
   try
@@ -301,7 +301,7 @@ async function LoadCharItems()
     });
     let data = await response.json();
     
-    const itemArea = document.getElementById('charItems');
+    const itemArea = document.getElementById('charItems');    
     if(data.length > 0)
     {      
       data.forEach(item =>
@@ -316,7 +316,7 @@ async function LoadCharItems()
         drop.textContent = 'Drop';
         drop.style.marginLeft = '5px';        
         
-        let textNode = document.createTextNode("Item: " + item.type);
+        let textNode = document.createTextNode("Item: " + item.type);        
         type.appendChild(textNode);        
         type.appendChild(drop);
 
@@ -365,6 +365,7 @@ async function LoadCharItems()
     }
     else
     {
+      console.log('error');
       itemArea.innerHTML = '';      
     }
   }
@@ -376,9 +377,19 @@ async function LoadCharItems()
 
 async function LoadLocationItems()
 {
+  const select = document.getElementById('select-characters');
+  const selectedOption = select.options[select.selectedIndex];
+  const charid = selectedOption.getAttribute('idchar');
+
+  const params = { charId: charid};  
+  const queryString = ParametrizeArray(params);
+
   try
   {
+    const response = await fetch('http://localhost' + '/getLocItems?' + params, () => 
+    {
 
+    });
   }
   catch(error)
   {

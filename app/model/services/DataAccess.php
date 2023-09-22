@@ -72,7 +72,7 @@ class DataAccess
         }
     }
 
-    public static function GetRow($table, $path, array $whereColumns, array $whereValues, $assocArray = false)
+    public static function GetRows($table, $path, array $whereColumns, array $whereValues, $assocArray = false)
     {
         $pdo = new PDO('sqlite:' . $path);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -97,15 +97,12 @@ class DataAccess
             $statement->execute($bindParams);
             if($assocArray == true)
             {
-                $result = $statement->fetchAll(PDO::FETCH_ASSOC);  
+                $result = $statement->fetchAll(PDO::FETCH_ASSOC);  // Returns all content as several associative arrays.
             }
             else
             {
-                $result = $statement->fetch();
-            }            
-            return $result;
-
-            $result = $statement->fetchAll(PDO::FETCH_ASSOC); 
+                $result = $statement->fetch(); // Returns all content as a single array.
+            }                        
             
             return $result;
         }

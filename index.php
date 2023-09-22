@@ -61,7 +61,7 @@ $app->get('/getCharacters', function (Request $request, Response $response) {
 $app->get('/getCharItems', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();    
-    $data = json_encode(DataAccess::GetRow('items', DB, ['inventory'], [$queryParams['charId']]), true);
+    $data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
 });
@@ -69,7 +69,7 @@ $app->get('/getCharItems', function (Request $request, Response $response)
 $app->get('/getLocation', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();
-    $data = json_encode(DataAccess::GetRow('locations', DB, ['id'], [$queryParams['charLoc']]));
+    $data = json_encode(DataAccess::GetRows('locations', DB, ['id'], [$queryParams['charLoc']]));
     $response->getBody()->write($data);    
     return $response->withHeader('Content-Type', 'application/json');
 });
