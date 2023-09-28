@@ -72,6 +72,34 @@ class DataAccess
         }
     }
 
+    public static function GetValueWithJoin($table1, $table2, $column, $whereColumns, $whereValues, $path)
+    {
+        $pdo = new PDO('sqlite:' . $path);        
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try
+        {
+            if (!is_array($whereColumns) || !is_array($whereValues) || count($whereColumns) !== count($whereValues))
+            {
+                throw new Exception("Invalid input: Columns and values must be arrays, and be of the same length.");
+            }
+
+            $whereClauses = '';
+            for($i = 0; $i < count($whereColumns); $i++)
+            {
+                $whereClauses .= " {$whereColumns[$i]} = {$whereValues[$i]}";
+                if($i < count($whereColumns) - 1)
+                {
+                    $whereClauses .= ' AND';
+                }
+            }
+            
+        }
+        catch(Exception $e)
+        {
+            self::Catch($e);
+        }
+    }
+
     public static function GetRows($table, $path, array $whereColumns, array $whereValues, $assocArray = false)
     {
         $pdo = new PDO('sqlite:' . $path);

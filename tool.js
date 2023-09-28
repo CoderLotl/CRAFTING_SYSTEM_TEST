@@ -5,6 +5,11 @@ async function load()
     PopulateItemType();
     PopulateCharacters();
 
+    document.getElementById('refreshPage').addEventListener('click', () =>
+    {
+      location.reload();
+    });
+
     //SELECT ITEM TYPE
     document.getElementById('select-itemType').addEventListener('change', () =>
     {
@@ -386,14 +391,86 @@ async function LoadLocationItems()
 
   try
   {
-    const response = await fetch('http://localhost' + '/getLocItems?' + params, () => 
+    const response = await fetch('http://localhost' + '/getLocItems?' + queryString,
     {
-
+        method: "GET",
+        headers: {                
+        "Content-Type": "text/plain",
+        }        
     });
+    let data = await response.json();
+    
+    const itemArea = document.getElementById('locItems');    
+    if(data.length > 0)
+    {      
+      data.forEach(item =>
+      {
+        let article = document.createElement('article');
+        article.setAttribute('class', 'itemArticle');
+
+        let type = document.createElement('p');
+        type.style.height = '10px';
+
+        let drop = document.createElement('button');
+        drop.textContent = 'Drop';
+        drop.style.marginLeft = '5px';        
+        
+        let textNode = document.createTextNode("Item: " + item.type);        
+        type.appendChild(textNode);        
+        type.appendChild(drop);
+
+        let details = document.createElement('details');
+        let id = document.createElement('p');
+        let components = document.createElement('p');
+        let attributes = document.createElement('p');
+        let state = document.createElement('p');
+
+        article.setAttribute('itemID', item.id);
+        id.textContent = "ID: " + item.id;
+        components.textContent = "Components: " + item.components;
+        attributes.textContent = "Attributes: " + item.attributes;
+        state.textContent = "State: " + item.state;
+
+        article.appendChild(type);
+        details.appendChild(id);
+        details.appendChild(components);
+        details.appendChild(attributes);
+        details.appendChild(state);        
+        article.appendChild(details);
+
+        itemArea.appendChild(article);
+
+        drop.addEventListener('click', async (event) =>
+        {
+          event.preventDefault();
+          const artID = item.id;
+          //console.log(artID);
+
+          if(await DropItem(artID) == true)
+          {
+            let articles = itemArea.querySelectorAll('article');
+            articles.forEach(art =>
+            {
+                let thisArtID = art.getAttribute('itemID');
+                //console.log(thisArtID);
+                if(thisArtID == artID)
+                {
+                  itemArea.removeChild(art);                
+                }
+            });
+          }
+        });
+      });      
+    }
+    else
+    {
+      console.log('error');
+      itemArea.innerHTML = '';      
+    }
   }
-  catch(error)
+  catch (error)
   {
-    CatchError();
+    CatchError(error);    
   }
 }
 

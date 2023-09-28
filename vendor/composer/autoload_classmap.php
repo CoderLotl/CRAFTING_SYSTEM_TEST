@@ -10,6 +10,7 @@ return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Model\\Classes\\Item' => $baseDir . '/app/model/classes/Item.php',
     'Model\\Services\\DataAccess' => $baseDir . '/app/model/services/DataAccess.php',
+    'Model\\Services\\DataAccessMDB' => $baseDir . '/app/model/services/DataAccessMDB.php',
     'Model\\Utilities\\Log' => $baseDir . '/app/model/utilities/Log.php',
     'Model\\Utilities\\ObjectReviewer' => $baseDir . '/app/model/utilities/ObjectReviewer.php',
     'PhpToken' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',

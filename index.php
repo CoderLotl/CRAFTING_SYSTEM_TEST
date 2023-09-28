@@ -15,6 +15,7 @@ header('Content-Type: application/json; charset=UTF-8');
 
 use Model\Utilities\Log;
 use Model\Services\DataAccess;
+use Model\Services\DataAccessMDB;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -43,6 +44,11 @@ $app->get('/test', function (Request $request, Response $response) { //return pl
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'text/plain');
 });
+$app->get('/testMongo', function (Request $request, Response $response) { //return plain text
+    $data = DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']);
+    $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', 'application/json');
+});
 /////////////////////////////////////////////////////////////
 #region - - - ROUTES - - -
 
@@ -61,6 +67,22 @@ $app->get('/getCharacters', function (Request $request, Response $response) {
 $app->get('/getCharItems', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();    
+    //$data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true));
+    //$data = DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']);
+    //Log::WriteLog('result.txt', json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true)));
+    //Log::WriteLog('result2.txt', DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']));
+    $content  = json_encode(DataAccessMDB::FindDocument('world', 'items', ['name'], ['pepe']));
+    $file = fopen('test.txt', 'a+');
+    fwrite($file, $content . "\n");
+    fclose($file);
+    $data = '';
+    $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+$app->get('/getLocItems', function (Request $request, Response $response)
+{
+    $queryParams = $request->getQueryParams();
+    //$locationID = DataAccess::GetValue('locatons', 'id', BD, )
     $data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
