@@ -9,6 +9,7 @@ use MongoDB\Driver\Manager;
 //DataAccessMDB::InsertDocument('world', 'items', ['id', 'type', 'components', 'attributes', 'locationType', 'state', 'inventory', 'description'], ['1', 'spoon', '', '', '1', '0', '1', 'A spoon']);
 //echo var_dump(json_encode(DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1'])));
 $content  = json_encode(DataAccessMDB::FindDocument('world', 'items', ['name'], ['pepe']));
-$file = fopen('test.txt', 'a+');
+/*$file = fopen('test.txt', 'a+');
 fwrite($file, $content . "\n");
-fclose($file);
+fclose($file);*/
+echo $content;

@@ -4,7 +4,8 @@
             "App\\": "app/"
         },
         "classmap": [
-            "app/"
+            "app/",
+            "vendor/"
         ]
     },
     "require": {

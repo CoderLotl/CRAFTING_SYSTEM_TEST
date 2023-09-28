@@ -16,6 +16,10 @@ class DataAccessMDB
     {
         self::$url = $url;
     }
+    public static function getURL()
+    {
+        return self::$url;
+    }
 
     private static function Catch($e)
     {

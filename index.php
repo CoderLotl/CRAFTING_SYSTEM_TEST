@@ -67,22 +67,15 @@ $app->get('/getCharacters', function (Request $request, Response $response) {
 $app->get('/getCharItems', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();    
-    //$data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true));
-    //$data = DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']);
-    //Log::WriteLog('result.txt', json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true)));
-    //Log::WriteLog('result2.txt', DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']));
-    $content  = json_encode(DataAccessMDB::FindDocument('world', 'items', ['name'], ['pepe']));
-    $file = fopen('test.txt', 'a+');
-    fwrite($file, $content . "\n");
-    fclose($file);
-    $data = '';
+    //$data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true)); // THIS WAS BEFORE MONGO
+    $data = json_encode(DataAccessMDB::FindDocument('world', 'items', ['locationType', 'inventory'], ['1', '1']));    
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
 });
 $app->get('/getLocItems', function (Request $request, Response $response)
 {
     $queryParams = $request->getQueryParams();
-    //$locationID = DataAccess::GetValue('locatons', 'id', BD, )
+    //$locationID = DataAccess::GetValue('locatons', 'id', BD, ) // THIS WAS BEFORE ... IDK
     $data = json_encode(DataAccess::GetRows('items', DB, ['inventory'], [$queryParams['charId']], true));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
@@ -117,6 +110,5 @@ $app->get('/getType', function (Request $request, Response $response) {
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', 'application/json');
 });
-
 
 $app->run();
